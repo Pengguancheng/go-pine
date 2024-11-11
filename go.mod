@@ -1,4 +1,4 @@
-module go-pine
+module github.com/Pengguancheng/go-pine
 
 go 1.22
 
