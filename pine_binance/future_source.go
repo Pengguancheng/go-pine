@@ -7,19 +7,30 @@ import (
 	"go-pine/core/ta"
 )
 
-func NewTaFutureSource(apiKey, secretKey string, len int, interval ta.Interval) (ta.Source, error) {
+func NewTaFutureSource(apiKey, secretKey, symbol string, dataLen int, interval ta.Interval) (ta.Source, error) {
 	svc := &FutureSource{
 		ApiKey:    apiKey,
 		SecretKey: secretKey,
-		Len:       len,
+		Len:       dataLen,
 		Interval:  interval,
 		Client:    futures.NewClient(apiKey, secretKey),
+		KLArr:     nil,
+		Symbol:    symbol,
 	}
-	res, err := svc.Client.NewKlinesService().Limit(svc.Len).Interval(string(svc.Interval)).Do(context.Background())
+	res, err := svc.Client.NewKlinesService().
+		Symbol(svc.Symbol).
+		Limit(svc.Len).
+		Interval(string(svc.Interval)).
+		Do(context.Background())
 	if err != nil {
 		return nil, err
 	}
-	svc.KLArr = res
+	svc.KLArr = make([]*futures.Kline, len(res))
+	// reverse arr sort
+	for i := 0; i < len(res); i++ {
+		reverseIndex := len(res) - 1 - i
+		svc.KLArr[reverseIndex] = res[i]
+	}
 	return svc, nil
 }
 
@@ -30,6 +41,7 @@ type FutureSource struct {
 	Interval  ta.Interval
 	Client    *futures.Client
 	KLArr     []*futures.Kline
+	Symbol    string
 }
 
 func (f *FutureSource) Close() []decimal.Decimal {
