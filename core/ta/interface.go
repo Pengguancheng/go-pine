@@ -8,7 +8,3 @@ type Source interface {
 	High() []decimal.Decimal
 	Low() []decimal.Decimal
 }
-
-type TechnicalAnalysis interface {
-	Sma(length int) (decimal.Decimal, error)
-}
