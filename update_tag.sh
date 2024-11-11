@@ -29,3 +29,7 @@ echo "Updated version file to: $NEW_VERSION"
 
 # Create a new Git tag
 git tag $NEW_VERSION
+
+# Commit the version file change
+git add version
+git commit -m "Bump version to $NEW_VERSION"
