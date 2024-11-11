@@ -33,3 +33,10 @@ git tag $NEW_VERSION
 # Commit the version file change
 git add version
 git commit -m "Bump version to $NEW_VERSION"
+
+echo "Committed version file change"
+
+# Push the new tag and commit to the remote repository
+git push origin main
+
+echo "Pushed new tag and commit to remote repository"
