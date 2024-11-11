@@ -1,11 +1,9 @@
 #!/bin/bash
 
-git fetch
+# Read the current version from the version file
+VERSION=$(cat version)
 
-# Get the highest tag number
-VERSION=$(git describe --tags --abbrev=0 2>/dev/null)
-
-# If there are no tags, start at v0.0.0
+# If the version file is empty or doesn't exist, start at v0.0.0
 if [[ -z "$VERSION" ]]; then
     VERSION="v0.0.0"
 fi
@@ -15,21 +13,19 @@ MAJOR=$(echo $VERSION | cut -d. -f1)
 MINOR=$(echo $VERSION | cut -d. -f2)
 PATCH=$(echo $VERSION | cut -d. -f3)
 
-# If PATCH is empty, set it to 0
-if [[ -z "$PATCH" ]]; then
-    PATCH=0
-fi
-
-# Increment the patch version by 0.01
-PATCH=$(echo "$PATCH + 1" | bc)
+# Increment the patch version by 1
+PATCH=$((PATCH + 1))
 
 # Create the new version number
-NEW_TAG="$MAJOR.$MINOR.$PATCH"
+NEW_VERSION="$MAJOR.$MINOR.$PATCH"
 
 echo "Current version: $VERSION"
-echo "New version: $NEW_TAG"
+echo "New version: $NEW_VERSION"
 
-# Create a new annotated tag
-git tag $NEW_TAG
+# Update the version file
+echo $NEW_VERSION > version
 
-echo "Created new tag: $NEW_TAG"
+echo "Updated version file to: $NEW_VERSION"
+
+# Create a new Git tag
+git tag $NEW_VERSION
